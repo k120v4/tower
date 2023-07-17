@@ -1,0 +1,167 @@
+.root {
+    
+    font-family:  'Tektur';
+    align-items: center;
+    background-color: #2582B7;
+    text-align: center;
+}
+
+.font-link {
+    font-family: 'Tektur', cursive;
+}
+
+.text {
+    margin-left: auto;
+    margin-right: auto;
+    color:#00cc00;
+    word-spacing: 1px;
+    background-color: #FFF;
+    line-height: 40px;
+    width: 70%;
+
+}
+
+.title {
+    color: #FFF;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 130px;
+
+}
+
+.redtitle {
+    color: red;
+    background-color: #000;
+    margin-left: auto;
+    margin-right: auto;
+    width: 15%;
+    min-width: 180px;
+}
+
+.faqtitle {
+    color: #00cc00;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    width: 64%;
+}
+
+.faq {
+    margin-left: 0px;
+    margin-top: 30px;
+    color: #FFF;
+    border:  solid #427AA8 1px;
+    border-radius:  5px;
+    border-width:  2px;
+
+
+}
+.faqb {
+    color: #fff;
+    margin-left: auto;
+    margin-right: auto;
+    width: 64%;
+    font-size: large;
+}
+
+
+.log {
+    border:  solid #427AA8 1px;
+    border-radius:  5px;
+    border-width:  5px;
+    font-size:  small;
+    line-height: 1;
+
+}
+
+.descrip {
+    margin-left: auto;
+    color: #FFF;
+}
+
+.label {
+    margin-left: auto;
+    color: #FFF;
+    display: inline-block;
+    text-align: left;
+
+}
+
+.descrip-small {
+    font-size: small;
+    margin-left: 40px;
+}
+
+
+.input {
+    width: 100px;
+}
+
+.button {
+    display: block;
+    height: 50px;
+    margin-bottom: 10px;
+    align-items: center;
+    line-height: 30px;
+    font-size: large;
+    width: 200px;
+    margin: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border: solid;
+    border-width: 1px;
+    
+    color: #FFF;
+    text-align: center;
+    text-decoration: none;
+    background: #24558E;
+    display: inline-block;
+}
+
+.button:hover {
+    cursor: pointer;
+    background: #5DB4E6;
+    text-decoration: none;
+    filter: none;
+}
+
+a:link {
+    color:#fff;
+}
+
+a:visited { 
+    color:#fff;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    /* Light grey */
+    border-top: 16px solid #3498db;
+    /* Blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
