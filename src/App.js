@@ -212,8 +212,8 @@ export default function App() {
       <p class="faqb"> The Tower has many levels. All trades on a level are at the same price and it takes 2 ETH of buys to move to the next level. 
       The price of each level doubles each time.</p>
 
-      <p class="faqb"> Each trade is maxed out at the capacity left on the level. </p>
-      <p class="faqb">For example, if 0.75 ETH has been purchased on level 5, then you can only buy 1.25 ETH worth. 
+      <p class="faqb"> Each trade is maxed out at the capacity left on the level.
+      For example, if 0.75 ETH has been purchased on level 5, then you can only buy 1.25 ETH worth. 
       Even if you try to buy 10 ETH, the contract will only take the capacity that remains.  
       Afterwards, the level will increase to 6, and then you or the next buyer can buy up to the full 2 ETH on the next trade.</p>
 
