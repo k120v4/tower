@@ -204,13 +204,13 @@ export default function App() {
       <h1 class="descrip"> Info </h1>
       <p class="faqb"> $TOWER is a lulcoin on Ethereum Mainnet.  </p>
 
-      <p class="faqb"> In case you haven't noticed, it's price behavior is a little wonky. 
+      <p class="faqb">In case you haven't noticed, it's price behavior is a little wonky.
       For every 2 ETH that is bought, $TOWER's price will double. This happens regardless of how much has been already bought.
       Early or late, you are always 2 ETH away from doubling up. Or, 20 ETH away from 1000x. </p>
 
-      <p class="faqb"> To create this unique price behavior, $TOWER is not traded on uniswap, but only here at the Tower to the Moon.</p>
-      <p class="faqb"> The Tower has many levels. All trades on a level are at the same price and it takes 2 ETH of buys to move to the next level. 
-      The price of each level doubles each time.</p>
+      <p class="faqb"> To create this unique price behavior, $TOWER is not traded on uniswap, but only here at the Tower to the Moon.
+      The Tower has many levels. All trades on a level are at the same price and it takes 2 ETH of buys to move to the next level. 
+      The price doubles on each level.</p>
 
       <p class="faqb"> Each trade is maxed out at the capacity left on the level.
       For example, if 0.75 ETH has been purchased on level 5, then you can only buy 1.25 ETH worth. 
