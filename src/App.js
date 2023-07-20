@@ -208,10 +208,9 @@ export default function App() {
       For every 2 ETH that is bought, $TOWER's price will double. This happens regardless of how much has been already bought.
       Early or late, you are always 2 ETH away from doubling up. Or, 20 ETH away from 1000x. </p>
 
-      <p class="faqb"> Perhaps you wonder how this works.</p>
       <p class="faqb"> To create this unique price behavior, $TOWER is not traded on uniswap, but only here at the Tower to the Moon.</p>
-      <p class="faqb"> The Tower has many levels, and every trade on a level is at the same price, proportional to 2^level. 
-      Each level has a capacity of 2 ETH before moving on to the next level.</p>
+      <p class="faqb"> The Tower has many levels. All trades on a level are at the same price and it takes 2 ETH of buys to move to the next level. 
+      The price of each level doubles each time.</p>
 
       <p class="faqb"> Each trade is maxed out at the capacity left on the level. </p>
       <p class="faqb">For example, if 0.75 ETH has been purchased on level 5, then you can only buy 1.25 ETH worth. 
@@ -219,7 +218,7 @@ export default function App() {
       Afterwards, the level will increase to 6, and then you or the next buyer can buy up to the full 2 ETH on the next trade.</p>
 
       <p class="faqb"> There's a 'market buy' button, which will buy at the current price. There's also a 'limit buy', 
-      which will buy only if the level is at or better than your limit. And similarly with the Sell buttons.</p>
+      which will only buy if the current level is at or better than your limit. And similarly with the Sell buttons.</p>
 
      <h1 class="descrip"> Tokenomics </h1>
      <p class="faqb"> 1T tokens, all used for liquidity by the Tower. 2% sell tax for marketing funds. </p>
