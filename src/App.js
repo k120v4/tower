@@ -3,24 +3,25 @@ import { ethers } from "ethers";
 import "./style.css";
 import tower from './tower.webp';
 import tower2 from './2.webp';
-import bg from './star_background.jpeg';
+/* global BigInt */
 
 const contractABI = require("./Doubleswap.json");
 const contractTokenAABI = require("./tokenAABI.json");
-const contract_address_swap = "0x0A46695a046a87Ef212fcF2d60e2feD8b46E7997";
+const swap_address = "0x0A46695a046a87Ef212fcF2d60e2feD8b46E7997";
 const tokenA_address = "0x95A45e4c3A8AC8A65C89c114Ed3c9f3114DA3931";
-const weth_address = "0x95A45e4c3A8AC8A65C89c114Ed3c9f3114DA3931";
+const weth_address = "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83";
 
 export default function App() {
-  const [acct, setAcct] = useState('');
+  const [acct, setAcct] = useState(0);
   const [query, setQuery] = useState('');
   const [queryAmount, setQueryAmount] = useState(0);
   const [queryAmountsell, setQueryAmountsell] = useState(0);
   const [queryLimit, setQueryLimit] = useState('');
   const [query3, setQuery3] = useState('');
-  const [level, setLevel] = useState(123);
-  const [FBGM_balance, setFBGM_balance] = useState('');
-  const [temp, setTemp] = useState(123);
+  const [level, setLevel] = useState(0);
+  const [towerAmount, setTowerAmount] = useState('');
+  const [wethAmount, setWethAmount] = useState('');
+  const [temp, setTemp] = useState(0x02bd23d7e022b927);
   const [price, setPrice] = useState(0.1);
   const [loading, setLoading] = useState(true);
   const [metaMaskEnabled, setMetaMaskEnabled] = useState(false);
@@ -31,7 +32,7 @@ export default function App() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     let contract = new ethers.Contract(
-      contract_address_swap,
+      swap_address,
       contractABI.abi,
       signer
     );
@@ -61,38 +62,37 @@ export default function App() {
   };
 
   //functions for the buttons
-  let approve = async () => { 
-    const tx = await getContract_tokenA().approve(contract_address_swap, 1);
-  };
-
-  let approve2 = async () => { 
-    const tx = await getContract_weth().approve(contract_address_swap, 1);
-  };
-
-
-  let swap = async () => { 
-    const tx = await getContract().swap(query);
-  };
-
   let buy = async () => {
-    const tx = await getContract().buy(queryAmount, 0, {gasLimit: 200000});
+    const tx = await getContract().buy(queryAmount*1e18, 0, {gasLimit: 200000});
   };
 
   let sell = async () => {
-    const tx = await getContract().sell(queryAmountsell, 0, {gasLimit: 200000});
+    const tx = await getContract().sell(queryAmountsell*1e18, 0, {gasLimit: 200000});
   };
+
+  let approve = async () => { 
+    try {
+      const tx = await getContract_tokenA().approve(swap_address, ethers.constants.MaxInt256);
+    }
+    catch(err) {
+      if (err.code = "ACTION_REJECTED") {
+        alert("MetaMask Tx Signature: User denied transaction signature.")
+      }
+    }
+  };
+
+  let approve2 = async () => { 
+    try {
+      const tx = await getContract_weth().approve(swap_address, ethers.constants.MaxInt256);
+    }
+    catch(err) {
+      if (err.code = "ACTION_REJECTED") {
+        alert("MetaMask Tx Signature: User denied transaction signature.")
+      }
+    }
+  };
+
   
-  let fetchCurrentValue = async () => {
-    let l = await getContract().level();
-    setLevel(parseInt(l,16))
-    setPrice(1800*Math.pow(2,(parseInt(l,16)))/1000000)
-    //let bal = await getContract_tokenA().balanceOf(acct);
-    //console.log(bal);
-    //setFBGM_balance(parseInt(bal,16));
-
-    setLoading(false);
-  };
-
   const checkedWallet = async () => {
     try {
       const { ethereum } = window;
@@ -110,7 +110,6 @@ export default function App() {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: `0x${Number(250).toString(16)}` }],
       });
-      console.log("Connected", accounts[0]);
       localStorage.setItem("walletAddress", accounts[0]);
       setAcct(accounts[0]);
       setMetaMaskEnabled(true);
@@ -124,6 +123,23 @@ export default function App() {
       setMetaMaskEnabled(false);
     }
   };
+
+  let fetchCurrentValue = async () => {
+    let l = await getContract().level();
+    let account = localStorage.getItem("walletAddress");
+    setLevel(parseInt(l,10))
+    setPrice(1800*Math.pow(2,(parseInt(l,10)))/1000000)
+    
+    let bal = await getContract_weth().balanceOf(account);
+    setWethAmount(parseInt(bal,10)/1e18);
+
+    bal = await getContract_tokenA().balanceOf(account);
+    setTowerAmount(parseInt(bal,10)/1e18);
+
+    setLoading(false);
+  };
+
+
 
   useEffect(() => {
     checkedWallet();
@@ -143,6 +159,13 @@ export default function App() {
       console.log('level updated')
       fetchCurrentValue(); 
     });
+
+    getContract().on("TokensPurchased", async (buyer) => {
+      if (buyer == localStorage.getItem("walletAddress")) { //working on this 
+        console.log('you bought');
+        fetchCurrentValue(); 
+      }
+    });
   };
 
   return (
@@ -154,8 +177,8 @@ export default function App() {
       {metaMaskEnabled && (
         <div>
           <label class="descrip" >
-            Welcome {acct}!<p></p>
-            We hope you enjoy your stay. 
+            Welcome {acct.substring(0,5) + ".." + acct.substring(40)}! We hope you enjoy your stay. <p></p>
+            
             <p></p>
           </label>
         </div>
@@ -165,64 +188,78 @@ export default function App() {
           <button onClick={checkedWallet} class="button"> CONNECT</button>
         </div>
       )}
+      
+
       <div>
         <p class = "descrip">🌛🌛🌛</p>
         <h2 class="descrip">Current Level: {level} </h2>
         <h2 class="descrip"> Price of $TOWER: ${1900*Math.pow(2,level)/1000000000} </h2>
-        <p class = "descrip">🌛🌛🌛</p>
+        
       </div>
+      
+      {metaMaskEnabled && (
       <div>
-        <p class="label" >
-          Amount: &nbsp;
-          <input value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> 
-        </p> &nbsp;
-        <button onClick={buy} class="button"> Market Buy </button>
-          <p></p>
+        <p class = "descrip">🌛🌛🌛</p>
+        <p class="faqb"> Your WETH: {wethAmount} </p>
+        <p class="faqb"> Your $TOWER: {towerAmount} </p>
+        
+        <div class="box">
+          <p class="label" >
+            Amount: &nbsp;
+            <input value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> 
+          </p> &nbsp;
+          <button onClick={buy} class="button"> Market Buy </button>
+        </div><p></p>
 
-        <p class="label" >
-          Amount: &nbsp;
-          <input class="input" value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> &nbsp;
-          Level Limit: &nbsp;
-          <input class="input" value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> 
-        </p> &nbsp;
-        <button onClick={buy} class="button"> Limit Buy </button>
-          <p></p>
+        <div class="box">
+          <p class="label" >
+            Amount: &nbsp;
+            <input class="input" value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> &nbsp;
+            Level Limit: &nbsp;
+            <input class="input" value={queryAmount} onChange={(e)=>setQueryAmount(e.target.value)} type="number"></input> 
+          </p> &nbsp;
+          <button onClick={buy} class="button"> Limit Buy </button>
+        </div><p></p>
 
-        <p class="label" >
-          Amount: &nbsp;
-          <input value={queryAmountsell} onChange={(e)=>setQueryAmountsell(e.target.value)} type="number"></input> 
-        </p> &nbsp;
-        <button onClick={sell} class="button"> Market Sell </button>
+        <div class="box">
+          <p class="label" >
+            Amount: &nbsp;
+            <input value={queryAmountsell} onChange={(e)=>setQueryAmountsell(e.target.value)} type="number"></input> 
+          </p> &nbsp;
+          <button onClick={sell} class="button"> Market Sell </button>
+        </div>
         <p></p>
 
-        <button onClick={approve2} class="button">Approve $WETH </button>&nbsp;
-        <button onClick={approve} class="button"> Approve $TOWER </button> 
-        
-
+        <div class="box">
+          <button onClick={approve2} class="button">Approve $WETH </button>&nbsp;&nbsp;
+          <button onClick={approve} class="button"> Approve $TOWER </button> 
+        </div>
       </div>
+      )}
+
       <p class = "descrip">🌛🌛🌛</p>
       <h1 class="descrip"> Info </h1>
       <p class="faqb"> $TOWER is a lulcoin on Ethereum Mainnet.  </p>
 
-      <p class="faqb">In case you haven't noticed, it's price behavior is a little wonky.
-      For every 2 ETH that is bought, $TOWER's price will double. This happens regardless of how much has been already bought.
-      Early or late, you are always 2 ETH away from doubling up. Or, 20 ETH away from 1000x. </p>
+      <p class="faqb">$TOWER's price doubles for every 2 ETH that is bought. 
+      Whether you buy early or late, you are always 2 ETH away from doubling your investment, or 20 ETH away from 1000x. </p>
 
-      <p class="faqb"> To create this unique price behavior, $TOWER is not traded on uniswap, but only here at the Tower to the Moon.
-      The Tower has many levels. All trades on a level are at the same price and it takes 2 ETH of buys to move to the next level. 
-      The price doubles on each level.</p>
+      <p class="faqb"> To achieve this unique price behavior, $TOWER is exclusively traded here and not on Uniswap.
+      The Tower has multiple levels and all trades on each level occur at the same price. It takes 2 ETH worth of buys to move to the next level
+      and the price doubles each time.</p>
 
-      <p class="faqb"> Each trade is maxed out at the capacity left on the level.
-      For example, if 0.75 ETH has been purchased on level 5, then you can only buy 1.25 ETH worth. 
-      Even if you try to buy 10 ETH, the contract will only take the capacity that remains.  
-      Afterwards, the level will increase to 6, and then you or the next buyer can buy up to the full 2 ETH on the next trade.</p>
+      <h1 class="descrip"> How to buy</h1>
+      <p class="faqb"> There are two types of buy buttons: "market buy" for the current price and "limit buy" which 
+      only executes if the level matches your limit or better. The same applies to the Sell buttons.</p>
 
-      <p class="faqb"> There's a 'market buy' button, which will buy at the current price. There's also a 'limit buy', 
-      which will only buy if the current level is at or better than your limit. And similarly with the Sell buttons.</p>
+      <p class="faqb"> Each trade is limited to the remaining capacity on each level.
+      For example, if 1.4 ETH has been purchased on level 5, then you can only buy up to 0.6 ETH. 
+      Even if you attempt to buy 10 ETH, the contract will only swap 0.6 ETH.  
+      Afterwards, the level increases to 6, allowing the next buyer to purchase the full 2 ETH on the next trade.</p>
 
      <h1 class="descrip"> Tokenomics </h1>
-     <p class="faqb"> 1T tokens, all used for liquidity by the Tower. 2% sell tax for marketing funds. </p>
-     <p class="faqb"> No mint, no owner, no team tokens.  </p>
+     <p class="faqb"> 1T tokens, all used for liquidity by the Tower.</p>
+     <p class="faqb"> No tax, no mint, no owner, no team tokens.  </p>
 
 
      <h1 class="descrip"> Links </h1>
