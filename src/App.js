@@ -253,7 +253,7 @@ export default function App() {
       only executes if the level matches your limit or better. The same applies to the Sell buttons.</p>
 
       <p class="faqb"> Each trade is limited to the remaining capacity on each level.
-      For example, if 1.4 ETH has been purchased on level 5, then you can only buy up to 0.6 ETH. 
+      For example, say 1.4 ETH has been purchased on level 5.
       Even if you attempt to buy 10 ETH, the contract will only swap 0.6 ETH.  
       Afterwards, the level increases to 6, allowing the next buyer to purchase the full 2 ETH on the next trade.</p>
 
